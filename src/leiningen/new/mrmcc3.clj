@@ -24,18 +24,22 @@
    "Your hacking starts... NOW!"
    "Write you some Clojure for Great Good!"])
 
-(defn mrmcc3 [name]
-  (let [render (t/renderer "mrmcc3")
+(defn mrmcc3 [name & opts]
+  (let [boot? ((set opts) "+boot")
+        render (t/renderer "mrmcc3")
         main-ns (t/multi-segment (t/sanitize-ns name))
         data {:raw  name
               :name (t/project-name name)
               :ns   main-ns
               :path (t/name-to-path main-ns)
               :quote (rand-nth quotes)}]
-    (main/info "Generating a new clojure project!")
+    (if boot?
+      (main/info "Booting a new clojure project!")
+      (main/info "Creating a new clojure project!"))
     (t/->files
       data
       ["src/{{path}}.clj" (render "core.clj" data)]
-      ["project.clj" (render "project.clj" data)]
+      [(if boot? "build.boot" "project.clj")
+       (render (if boot? "build.boot" "project.clj") data)]
       [".gitignore" (render "gitignore" data)]
       "resources")))
