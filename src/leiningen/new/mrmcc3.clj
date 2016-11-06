@@ -24,8 +24,8 @@
    "Your hacking starts... NOW!"
    "Write you some Clojure for Great Good!"])
 
-(defn mrmcc3 [name & opts]
-  (let [boot? ((set opts) "+boot")
+(defn mrmcc3 [name & raw-opts]
+  (let [opts (set raw-opts)
         render (t/renderer "mrmcc3")
         main-ns (t/multi-segment (t/sanitize-ns name))
         data {:raw  name
@@ -33,13 +33,26 @@
               :ns   main-ns
               :path (t/name-to-path main-ns)
               :quote (rand-nth quotes)}]
-    (if boot?
-      (main/info "Booting a new clojure project!")
-      (main/info "Creating a new clojure project!"))
-    (t/->files
-      data
-      ["src/{{path}}.clj" (render "core.clj" data)]
-      [(if boot? "build.boot" "project.clj")
-       (render (if boot? "build.boot" "project.clj") data)]
-      [".gitignore" (render "gitignore" data)]
-      "resources")))
+
+    (main/info
+      (str
+        (if (opts "boot") "Booting" "Creating") " a new "
+        (if (opts "cljs") "ClojureScript" "Clojure") " project!"))
+
+    (case opts
+      #{"boot" "cljs"} nil
+      #{"cljs"}
+      (t/->files data
+        ["src/{{path}}.cljs" (render "cljs/core.cljs" data)]
+        ["project.clj" (render "cljs/project.clj" data)]
+        ["resources/public/index.html" (render "cljs/index.html" data)]
+        [".gitignore" (render "cljs/gitignore" data)])
+      #{"boot"}
+      (t/->files data
+        ["src/{{path}}.clj" (render "clj/core.clj" data)]
+        ["build.boot" (render "clj/build.boot" data)]
+        [".gitignore" (render "clj/gitignore" data)])
+      (t/->files data
+        ["src/{{path}}.clj" (render "clj/core.clj" data)]
+        ["project.clj" (render "clj/project.clj" data)]
+        [".gitignore" (render "clj/gitignore" data)]))))
