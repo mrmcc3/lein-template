@@ -9,5 +9,7 @@ pom.xml.asc
 /.nrepl-port
 /.idea
 *.iml
-/resources/public/core.js
+node_modules
+
+/resources/public/app.js
 /resources/public/cljs

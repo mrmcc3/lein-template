@@ -1,3 +1,12 @@
-(ns {{ns}})
+(ns {{ns}}
+  (:require
+    [rum.core :as rum]))
 
-(js/console.log "{{quote}}")
+(rum/defc app []
+  [:.app "{{quote}}"])
+
+(defn mount-app []
+  (rum/mount (app) (js/document.getElementById "app")))
+
+(defn ^:export init []
+  (mount-app))
