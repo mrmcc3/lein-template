@@ -24,35 +24,34 @@
    "Your hacking starts... NOW!"
    "Write you some Clojure for Great Good!"])
 
-(defn mrmcc3 [name & raw-opts]
-  (let [opts (set raw-opts)
-        render (t/renderer "mrmcc3")
+(defn mrmcc3 [name & [cmd]]
+  (let [render  (t/renderer "mrmcc3")
         main-ns (t/multi-segment (t/sanitize-ns name))
-        data {:raw  name
-              :name (t/project-name name)
-              :ns   main-ns
-              :path (t/name-to-path main-ns)
-              :quote (rand-nth quotes)}]
+        data    {:raw   name
+                 :name  (t/project-name name)
+                 :ns    main-ns
+                 :path  (t/name-to-path main-ns)
+                 :quote (rand-nth quotes)}]
 
-    (main/info
-      (str
-        (if (opts "boot") "Booting" "Creating") " a new "
-        (if (opts "cljs") "ClojureScript" "Clojure") " project!"))
+    (when (= cmd nil)
+      (main/info "Creating a new Clojure project!")
+      (t/->files data
+                 ["project.clj" (render "clj/project.clj" data)]
+                 [".gitignore" (render "clj/gitignore" data)]
+                 ["src/{{path}}.clj" (render "clj/core.clj" data)]))
 
-    (case opts
-      #{"boot" "cljs"} nil
-      #{"cljs"}
+    (when (= cmd "+logback")
+      (main/info "Creating a new Clojure project! + logback")
       (t/->files data
-        ["src/{{path}}.cljs" (render "cljs/core.cljs" data)]
-        ["project.clj" (render "cljs/project.clj" data)]
-        ["resources/public/index.html" (render "cljs/index.html" data)]
-        [".gitignore" (render "cljs/gitignore" data)])
-      #{"boot"}
+                 ["project.clj" (render "logback/project.clj" data)]
+                 [".gitignore" (render "logback/gitignore" data)]
+                 ["src/{{path}}.clj" (render "logback/core.clj" data)]
+                 ["resources/logback.xml" (render "logback/logback.xml" data)]))
+
+    (when (= cmd "cljs")
+      (main/info "Creating a new ClojureScript project!")
       (t/->files data
-        ["src/{{path}}.clj" (render "clj/core.clj" data)]
-        ["build.boot" (render "clj/build.boot" data)]
-        [".gitignore" (render "clj/gitignore" data)])
-      (t/->files data
-        ["src/{{path}}.clj" (render "clj/core.clj" data)]
-        ["project.clj" (render "clj/project.clj" data)]
-        [".gitignore" (render "clj/gitignore" data)]))))
+                 ["src/{{path}}.cljs" (render "cljs/core.cljs" data)]
+                 ["project.clj" (render "cljs/project.clj" data)]
+                 ["resources/public/index.html" (render "cljs/index.html" data)]
+                 [".gitignore" (render "cljs/gitignore" data)]))))

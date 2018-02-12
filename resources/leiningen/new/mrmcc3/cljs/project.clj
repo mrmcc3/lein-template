@@ -1,16 +1,10 @@
 (defproject {{raw}} "0.1.0-SNAPSHOT"
 
-  :dependencies [[org.clojure/clojure "1.9.0-alpha17"]
-                 [org.clojure/clojurescript "1.9.854"]
+  :dependencies [[org.clojure/clojure "1.9.0"]
+                 [org.clojure/clojurescript "1.9.946"]
+                 [rum "0.11.1"]]
 
-                 #_[com.cognitect/transit-cljs "0.8.239"]
-                 #_[org.clojure/spec.alpha "0.1.123"]
-                 #_[org.clojure/test.check "0.9.0"]
-                 #_[datascript "0.16.1"]
-
-                 [rum "0.10.8"]]
-
-  :plugins [[lein-figwheel "0.5.11"]
+  :plugins [[lein-figwheel "0.5.14"]
             [lein-cljsbuild "1.1.7"]]
 
   :aliases {"dev"  ["figwheel"]
@@ -27,15 +21,12 @@
                                        :output-to            "resources/public/app.js"
                                        :output-dir           "resources/public/cljs"
                                        :asset-path           "cljs"
-                                       :language-in          :ecmascript5
                                        :source-map-timestamp true}}
                        {:id           "dist"
                         :source-paths ["src"]
                         :compiler     {:main            {{ns}}
                                        :output-to       "resources/public/app.js"
                                        :optimizations   :advanced
-                                       :closure-defines {goog.DEBUG false}
-                                       :language-in     :ecmascript5
                                        :pretty-print    false}}]}
 
   :figwheel {:repl false
