@@ -1,4 +1,4 @@
-(defproject mrmcc3/lein-template "0.4.0"
+(defproject mrmcc3/lein-template "0.5.0-SNAPSHOT"
   :description "there are many lein templates. this one is mine"
   :url "https://github.com/mrmcc3/lein-template"
   :license {:name "Eclipse Public License"
